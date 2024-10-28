@@ -1,4 +1,6 @@
 class Student:
+    instance = []
+
     def __init__(self, name, surname, gender):
         self.name = name
         self.surname = surname
@@ -6,6 +8,7 @@ class Student:
         self.finished_courses = []
         self.courses_in_progress = []
         self.grades = {}
+        Student.instance.append(self)
 
 #Метод выставления оценки лектору
     def add_grade_lector(self, lecturer, course, grade):
@@ -39,10 +42,13 @@ class Mentor:
         self.surname = surname
 
 class Lecturer(Mentor):
+    instance = []
+
     def __init__ (self, name, surname):
         super().__init__(name, surname)
         self.courses_attached = []
         self.lectures_grade = {}
+        Lecturer.instance.append(self)
 
     def get_average_grade(self):
         av_grade = []
@@ -74,6 +80,34 @@ class Reviewer(Mentor):
     def __str__(self):
         return f"Имя: {self.name}\nФамилия: {self.surname}"
 
+def av_grade_all_students(student_list, course):
+    summary = 0
+    _len = 0
+    for student in student_list:
+        for sub in student.courses_in_progress:
+            if sub == course:
+                for ball in student.grades[course]:
+                    summary += ball
+                    _len += 1
+            else: 
+                None
+    av = (summary/_len)
+    return f'Средний балл за курс {course} у всех студентов = {av}'
+
+def av_grade_all_lectors(lectors_list, course):
+    summary = 0
+    _len = 0
+    for lector in lectors_list:
+        for sub in lector.courses_attached:
+            if sub == course:
+                for ball in lector.lectures_grade[course]:
+                    summary += ball
+                    _len += 1
+            else: 
+                None
+    av = (summary/_len)
+    return f'Средний балл за курс {course} у лекторов = {av}'
+
 #Добавили студентов
 djons = Student('Roy', 'Djons', 'male')
 djons.courses_in_progress += ['Python']
@@ -95,12 +129,12 @@ petrov = Reviewer('Petr', 'Petrrov')
 djons.add_grade_lector(mkrtchan, 'Python', 9)
 ignatov.add_grade_lector(mkrtchan, 'Python', 10)
 ignatov.add_grade_lector(mkrtchan, 'Git', 2)
-djons.add_grade_lector(ruslanov, 'Python', 3)
+djons.add_grade_lector(ruslanov, 'Python', 6)
 ignatov.add_grade_lector(ruslanov, 'Python', 7)
 
 ### Reviewer ставит оценку студенту
 cidorov.add_grade_student(djons, 'Python', 5)
-cidorov.add_grade_student(ignatov, 'Python', 2)
+cidorov.add_grade_student(ignatov, 'Python', 5)
 petrov.add_grade_student(ignatov, 'Git', 9)
 petrov.add_grade_student(ignatov, 'Python', 4)
 
@@ -134,3 +168,12 @@ else:
         print(f'{djons.name} {djons.surname} имеет средний бал выше, чем {ignatov.name} {ignatov.surname}')
     else:
         print(f'{ignatov.name} {ignatov.surname} имеет средний бал выше, чем {djons.name} {djons.surname}')
+
+print()
+#Вывод средней оценки у всех студентов за определенный курс
+print(av_grade_all_students(Student.instance, 'Python'))
+print(av_grade_all_students(Student.instance, 'Git'))
+
+#Вывод средней оценки всех лекторов за определенный курс
+print(av_grade_all_lectors(Lecturer.instance, 'Python'))
+print(av_grade_all_lectors(Lecturer.instance, 'Git'))
