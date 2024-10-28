@@ -6,11 +6,6 @@ class Student:
         self.finished_courses = []
         self.courses_in_progress = []
         self.grades = {}
-    
-# Метод для получения информации о студенте
-    def get_info(self):
-        return (f'{self.name} {self.surname} - {self.gender}\nУчится - {self.courses_in_progress}\n\
-Закончил - {self.finished_courses}\nИмеет оценки - {self.grades}\n')
 
 #Метод выставления оценки лектору
     def add_grade_lector(self, lecturer, course, grade):
@@ -22,13 +17,25 @@ class Student:
         else:
             return 'Ошибка'  
 
+    def get_average_grade(self):
+        av_grade = []
+        for course in self.courses_in_progress:
+            av_grade += self.grades[course]
+        return sum(av_grade) / len(av_grade)
+    
+    def __ge__(self, student):
+        return self.get_average_grade() >= student.get_average_grade()
+    def __eq__(self, student):
+        return self.get_average_grade() == student.get_average_grade()
+    
+    def __str__(self):
+        return f"Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за домашние задания: {self.get_average_grade()}\n\
+Курсы в процессе изучения: {self.courses_in_progress}\nЗавершенные курсы: {self.finished_courses}"
+    
 class Mentor:
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
-
-    def get_info(self):
-        return (f'{self.name} {self.surname} преподаёт {self.courses_attached}')
 
 class Lecturer(Mentor):
     def __init__ (self, name, surname):
@@ -36,8 +43,19 @@ class Lecturer(Mentor):
         self.courses_attached = []
         self.lectures_grade = {}
 
-    def get_grade(self):
-        return (f'{self.surname} получил следующие оценки от студентов: {self.lectures_grade}')
+    def get_average_grade(self):
+        av_grade = []
+        for course in self.courses_attached:
+            av_grade += self.lectures_grade[course]
+        return sum(av_grade) / len(av_grade)
+    
+    def __ge__(self, lecturer):
+        return self.get_average_grade() >= lecturer.get_average_grade()
+    def __eq__(self, lecturer):
+        return self.get_average_grade() == lecturer.get_average_grade()
+    
+    def __str__(self):
+        return f"Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self.get_average_grade()}"
     
 class Reviewer(Mentor):
     def __init__(self, name, surname):
@@ -51,34 +69,66 @@ class Reviewer(Mentor):
                 student.grades[course] = [grade]
         else:
             return 'Ошибка' 
+    
+    def __str__(self):
+        return f"Имя: {self.name}\nФамилия: {self.surname}"
 
     #Создали экземпляры студентов
 
+
+#Добавили студентов
 djons = Student('Roy', 'Djons', 'male')
 djons.courses_in_progress += ['Python']
 ignatov = Student('billy', 'ignatov', 'male')
-ignatov.courses_in_progress += ['Python']
-    #Добавили лектора 
+ignatov.courses_in_progress += ['Python', 'Git']
+ignatov.finished_courses += ['Введение в программирование']
+
+#Добавили лектора 
 mkrtchan = Lecturer('Pavel', 'mkrtchan')
-mkrtchan.courses_attached += ['Python']
-    #Добавили Reviewer 
+mkrtchan.courses_attached += ['Python', 'Git']
+ruslanov = Lecturer('Ruslan', 'Ruslanov')
+ruslanov.courses_attached += ['Python']
+
+#Добавили Reviewer 
 cidorov = Reviewer('Cidr', 'Cidorov')
+petrov = Reviewer('Petr', 'Petrrov')
 
 ### Студент ставит оценку лектору
 djons.add_grade_lector(mkrtchan, 'Python', 9)
 ignatov.add_grade_lector(mkrtchan, 'Python', 10)
-print(mkrtchan.get_grade()) 
+ignatov.add_grade_lector(mkrtchan, 'Git', 2)
+djons.add_grade_lector(ruslanov, 'Python', 3)
+ignatov.add_grade_lector(ruslanov, 'Python', 7)
 
 ### Reviewer ставит оценку студенту
 cidorov.add_grade_student(djons, 'Python', 5)
 cidorov.add_grade_student(ignatov, 'Python', 2)
+petrov.add_grade_student(ignatov, 'Git', 9)
+petrov.add_grade_student(ignatov, 'Python', 4)
 
-print(djons.get_info())
-print(ignatov.get_info())
+###Демонстрация работы кода
+#Вывели информацию о студентах и преподователях
+print('Список лекторов')
+print(mkrtchan)
+print(ruslanov)
+print()
+print(ignatov)
+print(djons)
 
+#Сравнили лекторов
+if (mkrtchan == ruslanov):
+    print(f'{mkrtchan.name} {mkrtchan.surname} и {ruslanov.name} {ruslanov.surname} имеют одинаковый средний балл')
+else:
+    if (mkrtchan >= ruslanov):
+        print(f'{mkrtchan.name} {mkrtchan.surname} имеет средний бал выше, чем {ruslanov.name} {ruslanov.surname}')
+    else:
+        print(f'{ruslanov.name} {ruslanov.surname} имеет средний бал выше, чем {mkrtchan.name} {mkrtchan.surname}')
 
-# cool_mentor.rate_hw(best_student, 'Python', 10)
-# cool_mentor.rate_hw(best_student, 'Python', 10)
-# cool_mentor.rate_hw(best_student, 'Python', 10)
- 
-# print(best_student.grades)
+#Сравнили студентов
+if (djons == ignatov):
+    print(f'{djons.name} {djons.surname} и {ignatov.name} {ignatov.surname} имеют одинаковый средний балл')
+else:    
+    if (djons >= ignatov):
+        print(f'{djons.name} {djons.surname} имеет средний бал выше, чем {ignatov.name} {ignatov.surname}')
+    else:
+        print(f'{ignatov.name} {ignatov.surname} имеет средний бал выше, чем {djons.name} {djons.surname}')
