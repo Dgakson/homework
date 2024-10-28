@@ -17,6 +17,7 @@ class Student:
         else:
             return 'Ошибка'  
 
+#Метод для вычисления средней оценки студента
     def get_average_grade(self):
         av_grade = []
         for course in self.courses_in_progress:
@@ -73,9 +74,6 @@ class Reviewer(Mentor):
     def __str__(self):
         return f"Имя: {self.name}\nФамилия: {self.surname}"
 
-    #Создали экземпляры студентов
-
-
 #Добавили студентов
 djons = Student('Roy', 'Djons', 'male')
 djons.courses_in_progress += ['Python']
@@ -106,15 +104,18 @@ cidorov.add_grade_student(ignatov, 'Python', 2)
 petrov.add_grade_student(ignatov, 'Git', 9)
 petrov.add_grade_student(ignatov, 'Python', 4)
 
+
 ###Демонстрация работы кода
 #Вывели информацию о студентах и преподователях
 print('Список лекторов')
 print(mkrtchan)
 print(ruslanov)
 print()
+print('Список Студентов')
 print(ignatov)
 print(djons)
 
+print('\nСравнение лекторов')
 #Сравнили лекторов
 if (mkrtchan == ruslanov):
     print(f'{mkrtchan.name} {mkrtchan.surname} и {ruslanov.name} {ruslanov.surname} имеют одинаковый средний балл')
@@ -124,6 +125,7 @@ else:
     else:
         print(f'{ruslanov.name} {ruslanov.surname} имеет средний бал выше, чем {mkrtchan.name} {mkrtchan.surname}')
 
+print('\nСравнение студентов')
 #Сравнили студентов
 if (djons == ignatov):
     print(f'{djons.name} {djons.surname} и {ignatov.name} {ignatov.surname} имеют одинаковый средний балл')
